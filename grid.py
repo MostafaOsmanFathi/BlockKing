@@ -5,7 +5,7 @@ from cell import Cell
 from CONSTANTS import *
 
 
-class Map:
+class Grid:
     def __init__(self):
         self.screen = Screen()
         self.screen.setup(width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
@@ -13,9 +13,6 @@ class Map:
         self.screen.title("BlockKing")
         self.screen.tracer(0)
         self.grid = []
-
-    def add_block(self, block):
-        pass
 
     def draw_grid(self, n, m):
         x, y = START_X, START_Y

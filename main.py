@@ -1,11 +1,11 @@
 from turtle import Screen, Turtle
 from cell import Cell
-from map import Map
+from grid import Grid
 from CONSTANTS import *
 
 
 def main():
-    mp = Map()
+    mp = Grid()
     mp.draw_grid(N_CELLS, M_CELLS)
     mp.screen.update()
     mp.screen.mainloop()
