@@ -15,6 +15,10 @@ class Player(Turtle):
         self.goto(grid.grid[x][y].xcor(), grid.grid[x][y].ycor())
         self.dir = 0
         self.grid = grid
+        grid.screen.onkey(lambda: (self.set_dir_right(), self.move()), "Right")
+        grid.screen.onkey(lambda: (self.set_dir_left(), self.move()), "Left")
+        grid.screen.onkey(lambda: (self.set_dir_up(), self.move()), "Up")
+        grid.screen.onkey(lambda: (self.set_dir_down(), self.move()), "Down")
 
     def set_dir_up(self):
         self.dir = 3
