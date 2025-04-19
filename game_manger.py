@@ -50,13 +50,29 @@ class Game_Manger:
     def start_game(self):
         is_game_running = True
         while is_game_running:
-            for player in self.player_list:
+            for player in list(self.player_list):
                 if player.start_moving and player.can_move():
                     player.move()
-                    if self.grid.grid[player.x_cell_poss][player.y_cell_poss].cell_full_owner == player:
+
+
+                    cell = self.grid.grid[player.x_cell_poss][player.y_cell_poss]
+
+
+                    if cell.cell_temp_owner is not None and cell.cell_temp_owner != player:
+                        self.kill_player(player)
+                        continue
+
+
+                    if cell.cell_full_owner == player:
                         player.fill_cells()
                         self.graph_fill(player)
-                    self.grid.grid[player.x_cell_poss][player.y_cell_poss].set_temp_owner(player)
+
+                   
+                    cell.set_temp_owner(player)
 
             self.grid.screen.update()
             sleep(UPDATE_RATE)
+
+    def kill_player(self, player):
+        print(f"{player.player_color} died!")
+        player.reset_position()
