@@ -1,5 +1,6 @@
 from turtle import Turtle
 from CONSTANTS import *
+from time import sleep
 
 
 class Player(Turtle):
@@ -13,11 +14,21 @@ class Player(Turtle):
         self.speed("fastest")
         self.penup()
         self.shapesize(stretch_wid=PLAYER_SCALE, stretch_len=PLAYER_SCALE)
-        self.goto(grid.grid[x][y].xcor(), grid.grid[x][y].ycor())
-        self.dir = 0
         self.grid = grid
+        self.goto(grid.grid[x][y].xcor(), grid.grid[x][y].ycor())
+
+        # Set spawn position (initial position)
+        self.spawn_position = (grid.grid[x][y].xcor(), grid.grid[x][y].ycor())
+
+        # Add kill counter
+        self.kills = 0
+        self.deaths = 0
+
+        self.dir = 0
         self.start_moving = False
         self.list_of_cells = []
+        self.trail_cells = []
+        self.claimed_cells = []
 
         if keyboard_set == 1:
             grid.screen.onkey(lambda: self.set_dir_right(), "d")
@@ -31,7 +42,7 @@ class Player(Turtle):
             grid.screen.onkey(lambda: self.set_dir_down(), "Down")
 
     def set_dir_up(self):
-        if self.dir != 2 or (not self.start_moving):
+        if self.dir != 2 or not self.start_moving:
             self.dir = 3
             self.start_moving = True
 
@@ -53,19 +64,46 @@ class Player(Turtle):
     def can_move(self):
         new_x = self.x_cell_poss + PLAYER_MOVEMENTS[self.dir][0]
         new_y = self.y_cell_poss + PLAYER_MOVEMENTS[self.dir][1]
-        return new_x >= 0 and new_x < N_CELLS and new_y >= 0 and new_y < M_CELLS
+        return 0 <= new_x < N_CELLS and 0 <= new_y < M_CELLS
 
     def move(self):
-        self.start_moving = True
+        if not self.can_move():
+            return
+
         self.x_cell_poss += PLAYER_MOVEMENTS[self.dir][0]
         self.y_cell_poss += PLAYER_MOVEMENTS[self.dir][1]
-        if self.can_move():
-            x = self.grid.grid[self.x_cell_poss][self.y_cell_poss].xcor()
-            y = self.grid.grid[self.x_cell_poss][self.y_cell_poss].ycor()
-            self.goto(x, y)
-            self.list_of_cells.append((self.x_cell_poss, self.y_cell_poss))
+        x = self.grid.grid[self.x_cell_poss][self.y_cell_poss].xcor()
+        y = self.grid.grid[self.x_cell_poss][self.y_cell_poss].ycor()
+        self.goto(x, y)
+        self.list_of_cells.append((self.x_cell_poss, self.y_cell_poss))
 
     def fill_cells(self):
         for x, y in self.list_of_cells:
             self.grid.grid[x][y].set_full_owner(self)
         self.list_of_cells.clear()
+
+    def clear_trail(self):
+        for x, y in self.trail_cells:
+            self.grid.grid[x][y].clear_temp_owner()
+        self.trail_cells.clear()
+
+    def reset_position(self):
+        # Flash player when killed
+        self.color('white')
+        self.grid.screen.update()
+        sleep(0.1)
+        self.color(self.player_color)
+        self.grid.screen.update()
+
+        # Return to spawn position
+        self.goto(self.spawn_position)
+        # Reset position on grid
+        self.x_cell_poss = self.grid.get_cell_index_by_coord(self.spawn_position[0])[0]
+        self.y_cell_poss = self.grid.get_cell_index_by_coord(self.spawn_position[1])[1]
+        # Clear trail and claimed cells
+        self.clear_trail()
+        self.claimed_cells.clear()
+        self.trail_cells.clear()
+        self.list_of_cells.clear()
+        self.start_moving = False
+        self.deaths += 1
