@@ -22,6 +22,11 @@ class Cell(Turtle):
     def set_owner(self, owner: player.Player):
         if self.cell_temp_owner == owner:
             self.cell_full_owner = owner
-            self.change_color(owner.player_color)
+            self.change_color('dark' + owner.player_color)
         else:
             self.cell_temp_owner = owner
+            self.change_color('light' + owner.player_color)
+
+    def set_full_owner(self, owner: player.Player):
+        self.cell_full_owner = owner
+        self.change_color('dark' + owner.player_color)

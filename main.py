@@ -6,7 +6,6 @@ from CONSTANTS import *
 from player import Player
 from game_manger import Game_Manger
 
-
 def main():
     game = Game_Manger()
     game.add_player('green',0)

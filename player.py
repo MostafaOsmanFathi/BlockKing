@@ -3,7 +3,7 @@ from CONSTANTS import *
 
 
 class Player(Turtle):
-    def __init__(self, color, grid, x, y):
+    def __init__(self, color, grid, x, y, keyboard_set):
         super().__init__()
         self.x_cell_poss = x
         self.y_cell_poss = y
@@ -17,36 +17,55 @@ class Player(Turtle):
         self.dir = 0
         self.grid = grid
         self.start_moving = False
+        self.list_of_cells = []
 
-        grid.screen.onkey(lambda: self.set_dir_right(), "Right")
-        grid.screen.onkey(lambda: self.set_dir_left(), "Left")
-        grid.screen.onkey(lambda: self.set_dir_up(), "Up")
-        grid.screen.onkey(lambda: self.set_dir_down(), "Down")
+        if keyboard_set == 1:
+            grid.screen.onkey(lambda: self.set_dir_right(), "d")
+            grid.screen.onkey(lambda: self.set_dir_left(), "a")
+            grid.screen.onkey(lambda: self.set_dir_up(), "w")
+            grid.screen.onkey(lambda: self.set_dir_down(), "s")
+        else:
+            grid.screen.onkey(lambda: self.set_dir_right(), "Right")
+            grid.screen.onkey(lambda: self.set_dir_left(), "Left")
+            grid.screen.onkey(lambda: self.set_dir_up(), "Up")
+            grid.screen.onkey(lambda: self.set_dir_down(), "Down")
 
     def set_dir_up(self):
-        self.dir = 3
-        self.start_moving = True
+        if self.dir != 2 or (not self.start_moving):
+            self.dir = 3
+            self.start_moving = True
 
     def set_dir_down(self):
-        self.dir = 2
-        self.start_moving = True
+        if self.dir != 3 or not self.start_moving:
+            self.dir = 2
+            self.start_moving = True
 
     def set_dir_left(self):
-        self.dir = 1
-        self.start_moving = True
+        if self.dir != 0 or not self.start_moving:
+            self.dir = 1
+            self.start_moving = True
 
     def set_dir_right(self):
-        self.dir = 0
-        self.start_moving = True
+        if self.dir != 1 or not self.start_moving:
+            self.dir = 0
+            self.start_moving = True
+
+    def can_move(self):
+        new_x = self.x_cell_poss + PLAYER_MOVEMENTS[self.dir][0]
+        new_y = self.y_cell_poss + PLAYER_MOVEMENTS[self.dir][1]
+        return new_x >= 0 and new_x < N_CELLS and new_y >= 0 and new_y < M_CELLS
 
     def move(self):
+        self.start_moving = True
         self.x_cell_poss += PLAYER_MOVEMENTS[self.dir][0]
         self.y_cell_poss += PLAYER_MOVEMENTS[self.dir][1]
-        self.x_cell_poss = min(self.x_cell_poss, N_CELLS - 1)
-        self.x_cell_poss = max(self.x_cell_poss, 0)
-        self.y_cell_poss = min(self.y_cell_poss, M_CELLS - 1)
-        self.y_cell_poss = max(self.y_cell_poss, 0)
-        x = self.grid.grid[self.x_cell_poss][self.y_cell_poss].xcor()
-        y = self.grid.grid[self.x_cell_poss][self.y_cell_poss].ycor()
-        print("new poss", x, y)
-        self.goto(x, y)
+        if self.can_move():
+            x = self.grid.grid[self.x_cell_poss][self.y_cell_poss].xcor()
+            y = self.grid.grid[self.x_cell_poss][self.y_cell_poss].ycor()
+            self.goto(x, y)
+            self.list_of_cells.append((self.x_cell_poss, self.y_cell_poss))
+
+    def fill_cells(self):
+        for x, y in self.list_of_cells:
+            self.grid.grid[x][y].set_full_owner(self)
+        self.list_of_cells.clear()
