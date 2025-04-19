@@ -17,5 +17,8 @@ START_Y = 350
 # Player configurations
 PLAYER_SHAPE = 'square'
 PLAYER_SCALE = SQUARE_SCALE - .5
-#Movemnts          0:right   1:left   2:down  3:up
+# Movemnts          0:right   1:left   2:down  3:up
 PLAYER_MOVEMENTS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+# Game Manger configurations
+UPDATE_RATE = 0.25

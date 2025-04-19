@@ -1,4 +1,6 @@
 from turtle import Turtle
+
+import player
 from CONSTANTS import *
 
 
@@ -11,6 +13,15 @@ class Cell(Turtle):
         self.speed("fastest")
         self.goto(x, y)
         self.shapesize(stretch_wid=SQUARE_SCALE, stretch_len=SQUARE_SCALE)
+        self.cell_full_owner = None
+        self.cell_temp_owner = None
 
     def change_color(self, color):
         self.color(color)
+
+    def set_owner(self, owner: player.Player):
+        if self.cell_temp_owner == owner:
+            self.cell_full_owner = owner
+            self.change_color(owner.player_color)
+        else:
+            self.cell_temp_owner = owner

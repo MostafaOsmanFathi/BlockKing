@@ -9,28 +9,35 @@ class Player(Turtle):
         self.y_cell_poss = y
         self.shape("square")
         self.color(color)
+        self.player_color = color
         self.speed("fastest")
         self.penup()
         self.shapesize(stretch_wid=PLAYER_SCALE, stretch_len=PLAYER_SCALE)
         self.goto(grid.grid[x][y].xcor(), grid.grid[x][y].ycor())
         self.dir = 0
         self.grid = grid
-        grid.screen.onkey(lambda: (self.set_dir_right(), self.move()), "Right")
-        grid.screen.onkey(lambda: (self.set_dir_left(), self.move()), "Left")
-        grid.screen.onkey(lambda: (self.set_dir_up(), self.move()), "Up")
-        grid.screen.onkey(lambda: (self.set_dir_down(), self.move()), "Down")
+        self.start_moving = False
+
+        grid.screen.onkey(lambda: self.set_dir_right(), "Right")
+        grid.screen.onkey(lambda: self.set_dir_left(), "Left")
+        grid.screen.onkey(lambda: self.set_dir_up(), "Up")
+        grid.screen.onkey(lambda: self.set_dir_down(), "Down")
 
     def set_dir_up(self):
         self.dir = 3
+        self.start_moving = True
 
     def set_dir_down(self):
         self.dir = 2
+        self.start_moving = True
 
     def set_dir_left(self):
         self.dir = 1
+        self.start_moving = True
 
     def set_dir_right(self):
         self.dir = 0
+        self.start_moving = True
 
     def move(self):
         self.x_cell_poss += PLAYER_MOVEMENTS[self.dir][0]
