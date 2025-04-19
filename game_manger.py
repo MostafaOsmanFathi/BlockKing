@@ -22,6 +22,15 @@ class Game_Manger:
             x, y = Game_Manger.player_respawn_positions[position]
             self.grid.grid[x][y].set_full_owner(self.player_list[-1])
 
+            self.grid.grid[x - 1][y - 1].set_full_owner(self.player_list[-1])
+            self.grid.grid[x - 1][y].set_full_owner(self.player_list[-1])
+            self.grid.grid[x][y - 1].set_full_owner(self.player_list[-1])
+            self.grid.grid[x + 1][y].set_full_owner(self.player_list[-1])
+            self.grid.grid[x + 1][y - 1].set_full_owner(self.player_list[-1])
+            self.grid.grid[x + 1][y + 1].set_full_owner(self.player_list[-1])
+            self.grid.grid[x][y + 1].set_full_owner(self.player_list[-1])
+            self.grid.grid[x - 1][y + 1].set_full_owner(self.player_list[-1])
+
     def dfs(self, grid, player, x, y, start=False):
         if x >= N_CELLS or x < 0 or y >= M_CELLS or y < 0:
             return False
