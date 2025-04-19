@@ -1,4 +1,5 @@
 from time import sleep
+from turtle import Turtle
 
 import grid
 from grid import Grid
@@ -14,6 +15,21 @@ class Game_Manger:
         self.grid.draw_grid(N_CELLS, M_CELLS)
         self.grid.screen.listen()
         self.player_list = []
+        # Add score display turtle
+        self.score_display = Turtle()
+        self.score_display.hideturtle()
+        self.score_display.penup()
+        self.score_display.color('white')
+        self.score_display.goto(0, SCREEN_HEIGHT/2 - 50)
+        self.update_score_display()
+
+    def update_score_display(self):
+        self.score_display.clear()
+        score_text = " | ".join(
+            f"{player.player_color}: Kills {player.kills} Deaths {player.deaths}"
+            for player in self.player_list
+        )
+        self.score_display.write(score_text, align="center", font=("Arial", 16, "normal"))
 
     def add_player(self, color, position, keyboard_set=0):
         if position >= 0 and position < 4:
@@ -54,20 +70,29 @@ class Game_Manger:
                 if player.start_moving and player.can_move():
                     player.move()
 
-
                     cell = self.grid.grid[player.x_cell_poss][player.y_cell_poss]
 
-
+                    # Check if player collides with another player's trail
                     if cell.cell_temp_owner is not None and cell.cell_temp_owner != player:
+                        # Find the owner of the trail
+                        trail_owner = cell.cell_temp_owner
                         self.kill_player(player)
+                        trail_owner.kills += 1  # Increment kill counter
+                        self.update_score_display()
                         continue
 
+                    # Check if player collides with another player's territory
+                    if cell.cell_full_owner is not None and cell.cell_full_owner != player:
+                        territory_owner = cell.cell_full_owner
+                        self.kill_player(player)
+                        territory_owner.kills += 1  # Increment kill counter
+                        self.update_score_display()
+                        continue
 
                     if cell.cell_full_owner == player:
                         player.fill_cells()
                         self.graph_fill(player)
 
-                   
                     cell.set_temp_owner(player)
 
             self.grid.screen.update()
@@ -76,3 +101,4 @@ class Game_Manger:
     def kill_player(self, player):
         print(f"{player.player_color} died!")
         player.reset_position()
+        self.update_score_display()
