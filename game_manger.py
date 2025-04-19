@@ -20,18 +20,17 @@ class Game_Manger:
             self.player_list.append(
                 Player(color, self.grid, *Game_Manger.player_respawn_positions[position], keyboard_set))
             x, y = Game_Manger.player_respawn_positions[position]
-            self.grid.grid[x][y].set_owner(self.player_list[-1])
-            self.grid.grid[x][y].set_owner(self.player_list[-1])
+            self.grid.grid[x][y].set_full_owner(self.player_list[-1])
 
-    def dfs(self, grid, player, x, y):
+    def dfs(self, grid, player, x, y, start=False):
         if x >= N_CELLS or x < 0 or y >= M_CELLS or y < 0:
             return False
         res = False
         if grid[x][y].cell_full_owner == player:
             res = True
 
-        res |= self.dfs(grid, player, x + 1, y)
-        if res:
+        res |= self.dfs(grid, player, x + 1, y, res | start)
+        if res and start:
             grid[x][y].set_full_owner(player)
         return res
 
@@ -48,7 +47,7 @@ class Game_Manger:
                     if self.grid.grid[player.x_cell_poss][player.y_cell_poss].cell_full_owner == player:
                         player.fill_cells()
                         self.graph_fill(player)
-                    self.grid.grid[player.x_cell_poss][player.y_cell_poss].set_owner(player)
+                    self.grid.grid[player.x_cell_poss][player.y_cell_poss].set_temp_owner(player)
 
             self.grid.screen.update()
             sleep(UPDATE_RATE)
