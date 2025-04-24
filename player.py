@@ -1,14 +1,14 @@
-from turtle import Turtle
 from CONSTANTS import *
+from turtle_camera import TurtleCamera
 
 
-class Player(Turtle):
+class Player(TurtleCamera):
     def __init__(self, color, grid, x, y, keyboard_set):
         super().__init__()
         self.x_cell_poss = x
         self.y_cell_poss = y
-        self.shape("square")
-        self.color(color)
+        # self.shape("square")
+        self.shape(f'img/{color}.gif')
         self.player_color = color
         self.speed("fastest")
         self.penup()
@@ -53,7 +53,7 @@ class Player(Turtle):
     def can_move(self):
         new_x = self.x_cell_poss + PLAYER_MOVEMENTS[self.dir][0]
         new_y = self.y_cell_poss + PLAYER_MOVEMENTS[self.dir][1]
-        return new_x >= 0 and new_x < N_CELLS and new_y >= 0 and new_y < M_CELLS
+        return 0 <= new_x < N_CELLS and 0 <= new_y < M_CELLS
 
     def move(self):
         self.start_moving = True
@@ -63,7 +63,8 @@ class Player(Turtle):
             x = self.grid.grid[self.x_cell_poss][self.y_cell_poss].xcor()
             y = self.grid.grid[self.x_cell_poss][self.y_cell_poss].ycor()
             self.goto(x, y)
-            self.list_of_cells.append((self.x_cell_poss, self.y_cell_poss))
+            if self.grid.grid[self.x_cell_poss][self.y_cell_poss].cell_full_owner != self:
+                self.list_of_cells.append((self.x_cell_poss, self.y_cell_poss))
 
     def fill_cells(self):
         for x, y in self.list_of_cells:
