@@ -1,5 +1,10 @@
 from CONSTANTS import *
+from textures import Textures
 from turtle_camera import TurtleCamera
+
+
+def resource_path(relative_path):
+    return Textures.color_dict[relative_path]
 
 
 class Player(TurtleCamera):
@@ -8,7 +13,7 @@ class Player(TurtleCamera):
         self.x_cell_poss = x
         self.y_cell_poss = y
         # self.shape("square")
-        self.shape(f'img/{color}.gif')
+        self.shape(resource_path(f'img/{color}.gif'))
         self.player_color = color
         self.speed("fastest")
         self.penup()
